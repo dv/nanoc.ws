@@ -17,6 +17,7 @@ module NanocSite
         title: 'Release Notes',
         markdown: 'basic',
         extension: 'md',
+        up_to_date_with_nanoc_4: true,
       }
 
       # identifier
