@@ -9,7 +9,7 @@ module NanocSite
     def items
       # content
       path = Bundler.rubygems.find_name('nanoc').first.full_gem_path
-      raw_content = File.read(File.join(path, 'NEWS.md'))
+      raw_content = File.read("#{path}/NEWS.md")
       content = raw_content.sub(/^#.*$/, '') # remove h1
 
       # attributes
@@ -19,7 +19,10 @@ module NanocSite
         extension: 'md',
       }
 
-      item = new_item(content, attributes, '/release-notes/')
+      # identifier
+      identifier = Nanoc::Identifier.new('/release-notes', style: :full)
+
+      item = new_item(content, attributes, identifier)
 
       [ item ]
     end
