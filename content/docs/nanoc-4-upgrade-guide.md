@@ -17,7 +17,7 @@ The good news is that nanoc 4.0 is quite similar to 3.8. Upgrading a nanoc 3.x s
 
 * Add `identifier_type: legacy` to the individual data source configurations.
 
-* Add `string_pattern_type: legacy` to the root of the configuration.
+* Add `string_pattern_type: legacy` to the configuration file.
 
 * In the `preprocess` block, use `@items.create` rather than instantiating `Nanoc::Item`. For example:
 
@@ -43,11 +43,53 @@ The good news is that nanoc 4.0 is quite similar to 3.8. Upgrading a nanoc 3.x s
 
 ## Extended upgrade guide
 
-TODO: Describe how to convert a site to use full identifiers and glob patterns.
+This section describes how to upgrade a site to identifiers with extensions and glob patterns. For details, see the [identifiers and patterns](/docs/reference/identifiers-and-patterns/) page.
 
-nanoc 4 has support for identifiers with extensions (full-style identifiers) as well as glob patterns. For details, see the [identifiers and patterns](/docs/reference/identifiers-and-patterns/) page.
+This section assumes you have already upgraded the site using the [quick upgrade guide](#quick-upgrade-guide) above.
 
-TODO: Encourage the use of the output diff to ensure no unexpected changes occur.
+Before you start, add `enable_output_diff: true` to the configuration file. This will let the <span class="command">compile</span> command write out a diff with the changes to the compiled output. This diff will allow you to verify that no unexpected changes occur.
+
+NOTE: If you use a filter that minifies HTML content, such as `html5small`, we recommend turning it off before upgrading the site, so that the output diff becomes easier to read.
+
+### Enabling glob patterns
+
+Before enabling them, ensure you are familiar with glob patterns. See the [glob patterns](/docs/reference/identifiers-and-patterns/#glob-patterns) section for documentation.
+
+To use glob patterns, remove `string_pattern_type: legacy` from the configuration file. Replace `*` and `+` with `**/*` in the arguments to `#compile`, `#route` and `#layout` in the <span class="filename">Rules</span> file, and also in calls to `@items[…]` and `@layouts[…]` throughout the site.
+
+This approach should work out of the box: nanoc should not raise errors and the output diff should be empty.
+
+Here is an example of a rule that uses the legacy and glob patterns:
+
+    #!ruby
+    # With legacy patterns
+    compile '/assets/style/*/' do
+      # (code here)
+    end
+
+    # With glob patterns
+    compile '/assets/style/**/*/' do
+      # (code here)
+    end
+
+Here is an example of legacy and glob patterns in calls to `@items[…]`:
+
+    #!ruby
+    # With legacy patterns
+    @items['/articles/*/']
+
+    # With glob patterns
+    @items['/articles/**/*/']
+
+### Enabling full-style identifiers
+
+This section assumes that glob patterns have already been enabled.
+
+TODO: Write me.
+
+### Other
+
+TODO: Describe how to switch away from the static data source.
 
 ## Troubeshooting
 
@@ -63,8 +105,6 @@ TODO: Encourage the use of the output diff to ensure no unexpected changes occur
       item.identifier.to_s[7..-2]
 
 * If you get a `NoMethodError` that you did not expect, you might be using a private API that is no longer present in nanoc 4.0. In case of doubt, ask for help on the [discussion group](http://nanoc.ws/community/#discussion-groups).
-
-TODO: Describe how to switch away from the static data source.
 
 ## Removed features
 
