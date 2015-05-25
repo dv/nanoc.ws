@@ -41,6 +41,8 @@ The good news is that nanoc 4.0 is quite similar to 3.8. Upgrading a nanoc 3.x s
         [new_item('Hello', {}, '/hello/')]
       end
 
+* If you use the static data source, disable it for now and follow the extended upgrade instructions below.
+
 ## Extended upgrade guide
 
 This section describes how to upgrade a site to identifiers with extensions and glob patterns. For details, see the [identifiers and patterns](/docs/reference/identifiers-and-patterns/) page.
@@ -81,15 +83,52 @@ Here is an example of legacy and glob patterns in calls to `@items[…]`:
     # With glob patterns
     @items['/articles/**/*/']
 
-### Enabling full-style identifiers
+### Enabling identifiers with extensions
 
-This section assumes that glob patterns have already been enabled.
+NOTE: This section assumes that glob patterns have been enabled.
 
 TODO: Write me.
 
-### Other
+### Upgrading from the static data source
 
-TODO: Describe how to switch away from the static data source.
+NOTE: This section assumes that glob patterns and identifiers with extensions have been enabled.
+
+The static data source no longer exists in nanoc 4. It existed in nanoc 3 to work around the problem of identifiers not including the file extension, which is no longer the case in nanoc 4.
+
+Theoretically, with identifiers with extensions enabed, it is possible to move the contents of the <span class="filename">static/</span> directory into <span class="filename">content/</span>. This can be tricky, however, because some rules that did not match any items in <span class="filename">static/</span> might now match.
+
+Because of this, the recommend approach for upgrading is to keep the <span class="filename">static/</span> directory, and set up a new data source that reads from this directory.
+
+In the site configuration, re-enable the static data source, change its type to `filesystem`, set `content_dir` to `"static"` and `layouts_dir` to `"static_layouts"`:
+
+    #!yaml
+    data_sources:
+      -
+        type: filesystem
+      -
+        type: filesystem
+        items_root: /static
+        content_dir: 'static'
+        layouts_dir: 'static_layouts'
+
+The `layouts_dir` option should point to a non-existant directory, so that it does not accidentally load layouts from <span class="filename">layouts/</span>—the other data source already does so.
+
+NOTE: In nanoc 4 final, `static_layouts` will likely be nullable, meaning that the workaround of specifying a non-existant dir will not be necessary.
+
+Lastly, update the rules to copy these items as-is, but without the `/static` prefix:
+
+    #!ruby
+    compile '/static/**/*' do
+    end
+
+    route '/static/**/*' do
+      # /static/foo.html → /foo.html
+      item.identifier.to_s.sub(/\A\/static/, '')
+    end
+
+This approach should work out of the box: nanoc should not raise errors and the output diff should be empty.
+
+A final improvement would be to move the contents of the <span class="filename">static/</span> directory into <span class="filename">content/</span>. The main thing to watch out for with this approach is rules that accidentally match the wrong items.
 
 ## Troubeshooting
 
