@@ -15,9 +15,9 @@ The good news is that nanoc 4.0 is quite similar to 3.8. Upgrading a nanoc 3.x s
 
 * Change mentions of `@site.config` to `@config`.
 
-* Add `identifier_style: legacy` to the root of the configuration.
+* Add `identifier_style: legacy` to the individual data source configurations.
 
-* Add `string_pattern_type: legacy` to the individual data source configurations.
+* Add `string_pattern_type: legacy` to the root of the configuration.
 
 * In the `preprocess` block, use `@items.create` rather than instantiating `Nanoc::Item`. For example:
 
