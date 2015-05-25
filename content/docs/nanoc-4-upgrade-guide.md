@@ -87,7 +87,35 @@ Here is an example of legacy and glob patterns in calls to `@items[…]`:
 
 NOTE: This section assumes that glob patterns have been enabled.
 
-TODO: Write me.
+TODO: This section is not yet complete.
+
+Before enabling them, ensure you are familiar with identifiers with extensions. See the [identifiers](/docs/reference/identifiers-and-patterns/#identifiers) section for documentation.
+
+To use identifiers with extensions, remove `identifier_type: legacy` from the configuration file.
+
+Here is an example of a rule that uses legacy identifiers and identifiers with extensions:
+
+    #!ruby
+    # Without identifiers with extensions
+    compile '/assets/style/**/*/' do
+      # (code here)
+    end
+
+    # With identifiers with extensions
+    compile '/assets/style/**/*' do
+      # (code here)
+    end
+
+Here is an example of identifiers with extensions in calls to `@items[…]`:
+
+    #!ruby
+    # Without identifiers with extensions
+    @items['/about/']
+
+    # With identifiers with extensions
+    @items['/about.*']
+
+TODO: Describe using `item.identifier.extension` rather than `item[:extension]`.
 
 ### Upgrading from the static data source
 
